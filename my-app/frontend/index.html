@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Counter App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            min-width: 350px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .counter-display {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 2rem 0;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-increment {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-increment:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.4);
+        }
+
+        .btn-decrement {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-decrement:hover {
+            background: #e53e3e;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
+        }
+
+        .btn-reset {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #3182ce;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(66, 153, 225, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .status {
+            margin-top: 2rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .status.error {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status.success {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Counter App</h1>
+        <div class="counter-display" id="counter">0</div>
+        <div class="buttons">
+            <button class="btn-increment" onclick="increment()">+ Increment</button>
+            <button class="btn-decrement" onclick="decrement()">- Decrement</button>
+            <button class="btn-reset" onclick="reset()">↻ Reset</button>
+        </div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <script>
+        // Update this to your API service URL when deploying
+        const API_URL = window.location.hostname === 'localhost' 
+            ? 'http://localhost:8080'
+            : 'http://counter-api:8080';
+
+        function showStatus(message, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + (isError ? 'error' : 'success');
+            setTimeout(() => {
+                status.textContent = '';
+                status.className = 'status';
+            }, 3000);
+        }
+
+        async function fetchCounter() {
+            try {
+                const response = await fetch(`${API_URL}/api/counter`);
+                const data = await response.json();
+                document.getElementById('counter').textContent = data.value;
+            } catch (error) {
+                console.error('Error fetching counter:', error);
+                showStatus('Error connecting to API', true);
+            }
+        }
+
+        async function increment() {
+            try {
+                const response = await fetch(`${API_URL}/api/counter/increment`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                document.getElementById('counter').textContent = data.value;
+                showStatus('Incremented!');
+            } catch (error) {
+                console.error('Error incrementing:', error);
+                showStatus('Error connecting to API', true);
+            }
+        }
+
+        async function decrement() {
+            try {
+                const response = await fetch(`${API_URL}/api/counter/decrement`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                document.getElementById('counter').textContent = data.value;
+                showStatus('Decremented!');
+            } catch (error) {
+                console.error('Error decrementing:', error);
+                showStatus('Error connecting to API', true);
+            }
+        }
+
+        async function reset() {
+            try {
+                const response = await fetch(`${API_URL}/api/counter/reset`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                document.getElementById('counter').textContent = data.value;
+                showStatus('Reset to zero!');
+            } catch (error) {
+                console.error('Error resetting:', error);
+                showStatus('Error connecting to API', true);
+            }
+        }
+
+        // Load initial counter value
+        fetchCounter();
+    </script>
+</body>
+</html>

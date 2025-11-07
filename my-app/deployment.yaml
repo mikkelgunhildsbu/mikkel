@@ -20,6 +20,7 @@ spec:
       containers:
       - name: my-app
         image: nginx:latest
+        imagePullSecret: ifNotPresent
         ports:
         - containerPort: 80
         resources:

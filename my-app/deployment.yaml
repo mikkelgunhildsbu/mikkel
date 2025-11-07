@@ -19,6 +19,8 @@ spec:
       containers:
       - name: my-app
         image: nginx:latest
+        ports:
+        - containerPort: 80
 ---
 
 apiVersion: apps/v1
@@ -38,7 +40,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginxinc/nginx-unprivileged:alpine
+        image: nginx:latest
         ports:
         - containerPort: 8080
     

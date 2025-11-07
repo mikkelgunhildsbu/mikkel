@@ -23,6 +23,8 @@ spec:
       labels:
         app: counter-api
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: api
         image: counter-api:latest

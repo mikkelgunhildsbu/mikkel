@@ -15,21 +15,12 @@ spec:
       labels:
         app: my-app
     spec:
-      imagePullSecrets:
-      - name: regcred
+     
       containers:
       - name: my-app
         image: nginx:latest
-        imagePullSecret: ifNotPresent
-        ports:
-        - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "250m"
-          limits:
-            memory: "128Mi"
-            cpu: "500m"
+        
+    
 ---
 apiVersion: v1
 kind: Service

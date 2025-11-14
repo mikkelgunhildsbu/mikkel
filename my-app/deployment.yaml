@@ -89,20 +89,11 @@ spec:
     spec:
       imagePullSecrets:
       - name: regcred
-      securityContext:
-        runAsNonRoot: true
-        fsGroup: 101
       containers:
       - name: frontend
         image: mikkelgunhildsbu/counter-frontend:latest
         ports:
         - containerPort: 8080
-        securityContext:
-          allowPrivilegeEscalation: false
-          runAsUser: 101
-          capabilities:
-            drop:
-            - ALL
         resources:
           requests:
             memory: "32Mi"

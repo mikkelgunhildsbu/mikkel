@@ -1,0 +1,51 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: restart-test-deployments
+  namespace: my-app
+spec:
+  schedule: "0 6 * * 1"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: myapp-restart-executor
+          containers:
+            - name: kubectl-executor-container
+              image: bitnami/kubectl:1.28.6
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  kubectl rollout restart deployment/my-app
+          restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: myapp-restart-executor
+  namespace: my-app
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: my-app
+  name: myapp-restart-executor-role
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    verbs: ["get", "watch", "list", "delete", "update", "create", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: myapp-restart-executor-rolebinding
+  namespace: my-app
+subjects:
+  - kind: ServiceAccount
+    name: myapp-restart-executor
+    namespace: my-app
+roleRef:
+  kind: Role
+  name: myapp-restart-executor-role
+  apiGroup: rbac.authorization.k8s.io

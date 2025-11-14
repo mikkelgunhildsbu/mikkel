@@ -1,0 +1,12 @@
+# apps/postgres/values.yaml
+postgresql:
+  auth:
+    username: testuser
+    password: testpassword123
+    database: testdb
+  persistence:
+    size: 10Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"

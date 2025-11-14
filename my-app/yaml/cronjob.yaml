@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: timeguessr-data
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: timeguessr-scraper
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: scraper
+            image: python:3.11-slim
+            volumeMounts:
+            - name: data
+              mountPath: /data  # Files saved here persist!
+            - name: app-code
+              mountPath: /app  # Your script is mounted here
+            command:
+            - /bin/sh
+            - -c
+            - |
+              pip install requests
+              python /app/main.py
+          volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: timeguessr-data
+          - name: app-code
+            configMap:
+              name: scriptconfigmap
+          restartPolicy: OnFailure

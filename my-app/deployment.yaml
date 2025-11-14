@@ -27,7 +27,7 @@ spec:
       - name: regcred
       containers:
       - name: api
-        image: counter-api:latest
+        image: mikkelgunhildsbu/counter-api:latest
         ports:
         - containerPort: 8080
         livenessProbe:
@@ -91,7 +91,7 @@ spec:
       - name: regcred
       containers:
       - name: frontend
-        image: counter-frontend:latest
+        image: mikkelgunhildsbu/counter-frontend:latest
         ports:
         - containerPort: 8080
         resources:

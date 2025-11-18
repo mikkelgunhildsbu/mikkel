@@ -69,7 +69,7 @@ metadata:
   labels:
     app: timeguessr-api
 spec:
-  host: gunhildsbu.no 
+  host: api.gunhildsbu.no 
   to:
     kind: Service
     name: timeguessr-api
@@ -80,7 +80,7 @@ spec:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
-  
+
 ---
 apiVersion: v1
 kind: Service

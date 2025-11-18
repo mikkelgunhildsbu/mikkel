@@ -1,8 +1,7 @@
-# apps/postgres/Chart.yaml
 apiVersion: v2
 name: postgres
 version: 1.0.0
 dependencies:
   - name: postgresql
-    version: 13.2.24
+    version: 18.1.9
     repository: https://charts.bitnami.com/bitnami

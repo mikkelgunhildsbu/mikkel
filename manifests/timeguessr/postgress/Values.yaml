@@ -1,12 +1,45 @@
-# apps/postgres/values.yaml
 postgresql:
+  primary:
+    initdb:
+      scripts:
+        init.sql: |
+          -- Create daily_scores table
+          CREATE TABLE IF NOT EXISTS daily_scores (
+            id SERIAL PRIMARY KEY,
+            date DATE NOT NULL,
+            username VARCHAR(255) NOT NULL,
+            score INTEGER NOT NULL,
+            rank INTEGER NOT NULL,
+            created_at TIMESTAMP DEFAULT NOW(),
+            UNIQUE(date, username)
+          );
+          
+          -- Add indexes for better query performance
+          CREATE INDEX IF NOT EXISTS idx_daily_scores_date ON daily_scores(date);
+          CREATE INDEX IF NOT EXISTS idx_daily_scores_username ON daily_scores(username);
+          CREATE INDEX IF NOT EXISTS idx_daily_scores_rank ON daily_scores(date, rank);
+          
+          -- Grant permissions to the application user
+          GRANT ALL PRIVILEGES ON TABLE daily_scores TO testuser;
+          GRANT USAGE, SELECT ON SEQUENCE daily_scores_id_seq TO testuser;
+
   auth:
-    username: testuser
-    password: testpassword123
-    database: testdb
+    existingSecret: postgres-credentials
+
   persistence:
+    enabled: true
     size: 10Gi
+    storageClass: ""  # use default storage class
+  
   resources:
     requests:
       memory: "256Mi"
       cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  # Network settings
+  service:
+    type: ClusterIP
+    port: 5432

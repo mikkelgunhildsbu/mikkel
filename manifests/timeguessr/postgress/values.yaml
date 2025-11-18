@@ -28,7 +28,7 @@ postgresql:
     auth:
       username: testuser
       database: mydb
-      existingSecret: postgres-credentials
+      existingSecret: postgres-postgresql
       secretKeys:
         adminPasswordKey: postgres-password
         userPasswordKey: password

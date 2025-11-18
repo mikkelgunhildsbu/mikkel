@@ -24,14 +24,12 @@ postgresql:
           GRANT USAGE, SELECT ON SEQUENCE daily_scores_id_seq TO testuser;
 
   auth:
-    postgresql:
-    auth:
-      username: testuser
-      database: mydb
-      existingSecret: postgres-postgresql
-      secretKeys:
-        adminPasswordKey: postgres-password
-        userPasswordKey: password
+    username: testuser
+    database: mydb
+    existingSecret: postgres-postgresql
+    secretKeys:
+      adminPasswordKey: postgres-password
+      userPasswordKey: password
         
   persistence:
     enabled: true

@@ -11,6 +11,7 @@ postgresql:
             score INTEGER NOT NULL,
             rank INTEGER NOT NULL,
             created_at TIMESTAMP DEFAULT NOW(),
+            week_num INTEGER not null,
             UNIQUE(date, username)
           );
           

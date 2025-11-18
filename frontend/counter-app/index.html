@@ -151,6 +151,7 @@
             try {
                 const response = await fetch(`${API_URL}/api/counter`);
                 const data = await response.json();
+
                 document.getElementById('counter').textContent = data.value;
             } catch (error) {
                 console.error('Error fetching counter:', error);

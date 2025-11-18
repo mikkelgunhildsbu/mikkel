@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timeguessr-api
+  namespace: tg
+  labels:
+    app: timeguessr-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: timeguessr-api
+  template:
+    metadata:
+      labels:
+        app: timeguessr-api
+    spec:
+      containers:
+      - name: api
+        image: mikkelgunhildsbu/timeguessr-api:latest  # REPLACE with your image registry
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: http
+        env:
+        - name: DB_HOST
+          value: "postgress-postgresql"  # Service name from your postgres helm chart
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "mydb"
+        - name: DB_USER
+          value: "testuser"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-postgresql  # Using existing postgres secret
+              key: password
+              namespace: postgres
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+
+---
+
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: timeguessr-api
+  namespace: tg
+  labels:
+    app: timeguessr-api
+spec:
+  host: gunhildsbu.no 
+  to:
+    kind: Service
+    name: timeguessr-api
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: timeguessr-api
+  namespace: tg
+  labels:
+    app: timeguessr-api
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+    name: http
+  selector:
+    app: timeguessr-api

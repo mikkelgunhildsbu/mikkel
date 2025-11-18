@@ -1,0 +1,21 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: timeguessr-frontend
+  namespace: default
+  labels:
+    app: timeguessr-frontend
+spec:
+  # host: timeguessr.yourdomain.com  # OPTIONAL: Uncomment and set your custom domain
+  to:
+    kind: Service
+    name: timeguessr-frontend
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+

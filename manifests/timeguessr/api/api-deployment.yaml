@@ -18,6 +18,8 @@ spec:
       containers:
       - name: api
         image: mikkelgunhildsbu/timeguessr-api:latest  # REPLACE with your image registry
+        imagePullSecrets:
+        - name: regcred  # REPLACE with your image pull secret if needed
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

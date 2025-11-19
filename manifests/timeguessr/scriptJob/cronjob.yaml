@@ -20,11 +20,11 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: scraper
-            image: mikkelgunhildsbu/timeguessr-scraper:latest  # REPLACE with your image registry
+            image: mikkelgunhildsbu/timeguessr-scraper:1.0  # REPLACE with your image registry
             imagePullPolicy: Always
             env:
             - name: API_URL              
-              value: "timeguessr-api-tg.apps.mikkel-test-ua17nz.clusters.intilitycloud.com/api/submit-score"
+              value: "https://timeguessr-api-tg.apps.mikkel-test-ua17nz.clusters.intilitycloud.com/api/submit-score"
             - name: TIMEGUESSR_COOKIE
               valueFrom:
                 secretKeyRef:

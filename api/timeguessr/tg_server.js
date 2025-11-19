@@ -79,7 +79,7 @@ app.post('/api/submit-score', async (req, res) => {
     const insertQuery = `
         INSERT INTO daily_scores
         (id, "date", username, score, "rank", week_num, created_at)
-        VALUES(nextval('leaderboard_id_seq'::regclass), '${date}', '${username}', ${score}, ${rank}, ${week_num}, now());
+        VALUES(nextval('daily_scores_id_seq'::regclass), '${date}', '${username}', ${score}, ${rank}, ${week_num}, now());
     `;
     try {
         await pool.query(insertQuery);

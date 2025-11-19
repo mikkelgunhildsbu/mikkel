@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: timeguessr-frontend
-  namespace: default
+  namespace: tg
   labels:
     app: timeguessr-frontend
 spec:
@@ -17,7 +17,10 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: YOUR_REGISTRY/timeguessr-frontend:latest  # REPLACE with your image registry
+        env:
+        imagePullSecrets:
+          - name: regcred
+        image: mikkelgunhildsbu/timeguessr-frontend:latest  
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -41,3 +44,43 @@ spec:
           limits:
             memory: "128Mi"
             cpu: "100m"
+
+---
+
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: timeguessr-frontend
+  namespace: tg
+  labels:
+    app: timeguessr-frontend
+spec:
+  to:
+    kind: Service
+    name: timeguessr-frontend
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: timeguessr-frontend
+  namespace: tg
+  labels:
+    app: timeguessr-frontend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: timeguessr-frontend
+

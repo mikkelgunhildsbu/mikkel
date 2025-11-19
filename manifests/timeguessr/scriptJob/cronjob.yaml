@@ -2,11 +2,10 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: timeguessr-leaderboard-scraper
-  namespace: default
+  namespace: tg
   labels:
     app: timeguessr-scraper
 spec:
-  # Run daily at 5:00 AM (17:00 in 24-hour format)
   schedule: "0 17 * * *"
   timeZone: "Europe/Oslo"  # Adjust to your timezone
   successfulJobsHistoryLimit: 3
@@ -21,11 +20,11 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: scraper
-            image: YOUR_REGISTRY/timeguessr-scraper:latest  # REPLACE with your image registry
+            image: mikkelgunhildsbu/timeguessr-scraper:latest  # REPLACE with your image registry
             imagePullPolicy: Always
             env:
-            - name: API_URL
-              value: "http://timeguessr-api:8080/api/submit-score"
+            - name: API_URL              
+              value: "http://timeguessr-api/api/submit-score"
             - name: TIMEGUESSR_COOKIE
               valueFrom:
                 secretKeyRef:

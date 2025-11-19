@@ -13,9 +13,6 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD,
 });
 
-const now = new Date();
-const hours = now.getHours();
-
 
 app.use(cors());
 app.use(express.json());
@@ -25,6 +22,9 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/api/todays', async (req, res) => {
+    const now = new Date();
+    const hours = now.getHours();
+    
     if (hours < 17) {
         return res.json({ error: 'Scores are not available yet, check back at 17:00' });
     }

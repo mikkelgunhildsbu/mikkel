@@ -24,7 +24,7 @@ spec:
             imagePullPolicy: Always
             env:
             - name: API_URL              
-              value: "http://timeguessr-api/api/submit-score"
+              value: "timeguessr-api-tg.apps.mikkel-test-ua17nz.clusters.intilitycloud.com/api/submit-score"
             - name: TIMEGUESSR_COOKIE
               valueFrom:
                 secretKeyRef:

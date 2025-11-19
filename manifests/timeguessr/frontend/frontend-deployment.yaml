@@ -15,11 +15,11 @@ spec:
       labels:
         app: timeguessr-frontend
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: frontend
         env:
-        imagePullSecrets:
-        - name: regcred
         image: mikkelgunhildsbu/timeguessr-frontend:latest  
         imagePullPolicy: Always
         ports:

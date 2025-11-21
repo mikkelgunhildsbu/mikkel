@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+require('dotenv').config();
 const app = express();
 const PORT = 8080;
 const { Pool } = require('pg');
@@ -22,15 +23,9 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/api/todays', async (req, res) => {
-    const now = new Date();
-    const hours = now.getHours();
-    
-    if (hours < 17) {
-        return res.json({ error: 'Scores are not available yet, check back at 17:00' });
-    }
-    else {
-        try {
-            const result = await pool.query(
+        
+    try {
+        const result = await pool.query(
                 `SELECT
                     username,
                     score,
@@ -38,37 +33,63 @@ app.get('/api/todays', async (req, res) => {
                 FROM daily_scores
                 WHERE date = CURRENT_DATE
                 ORDER BY rank ASC;`
-            )
-            res.json(result.rows);
-        } 
-        catch (err) {
-            console.error('Error fetching today\'s scores:', err);
-            res.status(500).json({ error: 'Internal server error' });
-        }
+                        )
+        res.json(result.rows);
+    } 
+      catch (err) {
+        console.error('Error fetching today\'s scores:', err); 
+        res.status(500).json({ error: 'Internal server error' });
     }
-});
+    });
 
 
 app.get('/api/weekly-scores', async (req, res) => {
     try {
         const result = await pool.query(
             `SELECT 
-                username, 
-                AVG(score) as avg_score,
-                COUNT(*) as days_played
+                username,
+                ROUND(AVG(score)) as avg_score,
+                SUM(score) as total_score,
+                COUNT(rank) FILTER (WHERE rank = 1) AS first_places,
+                COUNT(*) as days_played,
+                ROW_NUMBER() OVER (ORDER BY AVG(score) DESC) as avg_rank,
+                ROW_NUMBER() OVER (ORDER BY SUM(score) DESC) as total_rank,
+                ROW_NUMBER() OVER (ORDER BY COUNT(rank) FILTER (WHERE rank = 1) DESC) as first_place_rank
             FROM daily_scores
             WHERE week_num = EXTRACT(WEEK FROM CURRENT_DATE)
-            GROUP BY username
-            ORDER BY avg_score DESC;`
+            GROUP BY username;`
         )
-
         res.json(result.rows);
-        console.log(result);
     } catch (err) {
         console.error('Error fetching weekly scores:', err);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
+app.get('/api/monthly-scores', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT 
+                username,
+                ROUND(AVG(score)) as avg_score,
+                SUM(score) as total_score,
+                COUNT(rank) FILTER (WHERE rank = 1) AS first_places,
+                COUNT(*) as days_played,
+                ROW_NUMBER() OVER (ORDER BY AVG(score) DESC) as avg_rank,
+                ROW_NUMBER() OVER (ORDER BY SUM(score) DESC) as total_rank,
+                ROW_NUMBER() OVER (ORDER BY COUNT(rank) FILTER (WHERE rank = 1) DESC) as first_place_rank
+            FROM daily_scores
+            WHERE EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM CURRENT_DATE)
+            GROUP BY username;`
+        )
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching monthly scores:', err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`API server running on port ${PORT}`);

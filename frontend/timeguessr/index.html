@@ -1,19 +1,52 @@
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeGuessr Leaderboard</title>
+    <link rel="stylesheet" href="style.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body>
 
-    <div id="todays-leaderboard">
+    <div id="todays-leaderboard" class="leaderboard">
         <h1>Today's Timeguessr Scores</h1>
         <div id="leaderboard">Loading...</div>
     </div>
 
-    <div id="weekly-leaderboard">
-        <h1>This Week's Timeguessr Scores</h1>
-        <div id="w-leaderboard">Loading...</div>
+    <div id="weekly">
+        <div id="weekly-leaderboard_avg" class="leaderboard">
+            <h1>This Weeks Timeguessr Scores Average</h1>
+            <div id="w-leaderboard_avg">Loading...</div>
+        </div>
+
+        <div id="weekly-leaderboard_most_wins" class="leaderboard">
+            <h1>This Weeks Timeguessr Scores Most Wins</h1>
+            <div id="w-leaderboard_most_wins">Loading...</div>
+        </div>
+
+        <div id="weekly-leaderboard_total_score" class="leaderboard">
+            <h1>This Weeks Timeguessr Scores Total Score</h1>
+            <div id="w-leaderboard_total_score">Loading...</div>
+        </div>
     </div>
-    
+
+    <div id="monthly">
+        <div id="monthly-leaderboard_avg" class="leaderboard">
+            <h1>This Months Timeguessr Scores Average</h1>
+            <div id="m-leaderboard_avg">Loading...</div>
+        </div>
+
+        <div id="monthly-leaderboard_most_wins" class="leaderboard">
+            <h1>This Months Timeguessr Scores Most Wins</h1>
+            <div id="m-leaderboard_most_wins">Loading...</div>
+        </div>
+
+        <div id="monthly-leaderboard_total_score" class="leaderboard">
+            <h1>This Months Timeguessr Scores Total Score</h1>
+            <div id="m-leaderboard_total_score">Loading...</div>
+        </div>
+    </div>
+
 </body>
 </html>
 <script>
@@ -36,15 +69,58 @@
 
     async function fetchWeeklyScores() {
         const response = await fetch(`${API_URL}/api/weekly-scores`);
-        data = await response.json();
-        
-        for (let i = 0; i < data.length; i++) {
-            data[i] = `${i+1}. ${data[i].username} - ${parseInt(data[i].avg_score)} points <br>`;
-        }
-        document.getElementById('w-leaderboard').innerHTML = data.join('\n') ;
-        }
+        const data = await response.json();
+
+        // Sort and display average scores
+        const avgRanks = data.slice().sort((a, b) => a.avg_rank - b.avg_rank);
+        const avgHtml = avgRanks.map(player => 
+            `${player.avg_rank}. ${player.username} - ${player.avg_score} average points`
+        ).join('<br>\n');
+        document.getElementById('w-leaderboard_avg').innerHTML = avgHtml;
+
+        // Sort and display total scores
+        const totalRanks = data.slice().sort((a, b) => a.total_rank - b.total_rank);
+        const totalHtml = totalRanks.map(player => 
+            `${player.total_rank}. ${player.username} - ${player.total_score} total points`
+        ).join('<br>\n');
+        document.getElementById('w-leaderboard_total_score').innerHTML = totalHtml;
+
+        // Sort and display first places
+        const firstPlaceRanks = data.slice().sort((a, b) => a.first_place_rank - b.first_place_rank);
+        const firstPlaceHtml = firstPlaceRanks.map(player => 
+            `${player.first_place_rank}. ${player.username} - ${player.first_places} wins`
+        ).join('<br>\n');
+        document.getElementById('w-leaderboard_most_wins').innerHTML = firstPlaceHtml;
+    }
+
+    async function fetchMonthlyScores() {
+        const response = await fetch(`${API_URL}/api/monthly-scores`);
+        const data = await response.json();
+
+        // Sort and display average scores
+        const avgRanks = data.slice().sort((a, b) => a.avg_rank - b.avg_rank);
+        const avgHtml = avgRanks.map(player => 
+            `${player.avg_rank}. ${player.username} - ${player.avg_score} average points`
+        ).join('<br>\n');
+        document.getElementById('m-leaderboard_avg').innerHTML = avgHtml;
+
+        // Sort and display total scores
+        const totalRanks = data.slice().sort((a, b) => a.total_rank - b.total_rank);
+        const totalHtml = totalRanks.map(player => 
+            `${player.total_rank}. ${player.username} - ${player.total_score} total points`
+        ).join('<br>\n');
+        document.getElementById('m-leaderboard_total_score').innerHTML = totalHtml;
+
+        // Sort and display first places
+        const firstPlaceRanks = data.slice().sort((a, b) => a.first_place_rank - b.first_place_rank);
+        const firstPlaceHtml = firstPlaceRanks.map(player => 
+            `${player.first_place_rank}. ${player.username} - ${player.first_places} wins`
+        ).join('<br>\n');
+        document.getElementById('m-leaderboard_most_wins').innerHTML = firstPlaceHtml;
+    }
     
     
     fetchTodaysScores();
     fetchWeeklyScores();
+    fetchMonthlyScores();
 </script>

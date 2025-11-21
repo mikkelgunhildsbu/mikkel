@@ -1,0 +1,118 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #171515 0%, #E9E6DC 100%);
+    min-height: 100vh;
+    padding: 2rem;
+    color: #171515;
+}
+
+h1 {
+    color: #171515;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-bottom: 3px solid #DB5049;
+    padding-bottom: 0.5rem;
+}
+
+.leaderboard {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.leaderboard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.leaderboard div {
+    font-size: 1.1rem;
+    line-height: 2;
+    color: #4a5568;
+}
+
+#todays-leaderboard {
+    background: linear-gradient(135deg, #E9C2B8 0%, #E9E6DC 100%);
+    border-left: 5px solid #DB5049;
+}
+
+#todays-leaderboard h1 {
+    color: #171515;
+    border-bottom-color: #DB5049;
+}
+
+#weekly {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+#weekly .leaderboard {
+    background: linear-gradient(135deg, #E9E4D8 0%, #E9E6DC 100%);
+    border-left: 5px solid #DB5049;
+}
+
+#weekly .leaderboard h1 {
+    border-bottom-color: #DB5049;
+}
+
+#monthly {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+#monthly .leaderboard {
+    background: linear-gradient(135deg, #E9C2B8 0%, #DB5049 100%);
+    border-left: 5px solid #171515;
+}
+
+#monthly .leaderboard h1 {
+    border-bottom-color: #171515;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.2rem;
+    }
+
+    .leaderboard {
+        padding: 1rem;
+    }
+
+    .leaderboard div {
+        font-size: 1rem;
+    }
+
+    #weekly,
+    #monthly {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Loading state */
+.leaderboard div:empty::after {
+    content: 'Loading...';
+    color: #a0aec0;
+    font-style: italic;
+}
+
+/* Score styling */
+.leaderboard div br + * {
+    display: block;
+}
